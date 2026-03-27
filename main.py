@@ -2,6 +2,33 @@ import sys
 from keywords import KEYWORDS
 
 
+def error(msg):
+    raise Exception(f"Clav Error: {msg}")
+
+
+def handle_input(words):
+    if len(words) < 2:
+        error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle")
+
+    var_name = words[1]
+    return f"{var_name} = input()"
+
+
+def handle_print(words):
+    if len(words) < 2:
+        error("kya print kru? variable ka naam to de")
+
+    content = " ".join(words[1:])
+    return f"print({content})"
+
+
+def replace_keywords(line):
+    for clav_key, py_key in KEYWORDS.items():
+        if line.startswith(clav_key):
+            return line.replace(clav_key, py_key, 1)
+    return line
+
+
 def translate_code(code_lines):
     translated_lines = []
 
@@ -9,36 +36,35 @@ def translate_code(code_lines):
         stripped_line = line.rstrip()
         words = stripped_line.split()
 
-        # Handle empty lines
+        # Empty line safe
         if not words:
             translated_lines.append("")
             continue
 
-        # Handle input
-        if words[0] == "puch":
-            if len(words) < 2:
-                raise Exception("Syntax Error: variable ka naam miss h bro, Dhyan kidr h")
+        command = words[0]
+        valid_commands = ["dikha", "puch"] + list(KEYWORDS.keys())
 
-            var_name = words[1]
-            translated_lines.append(f"{var_name} = input()")
+        if command not in valid_commands:
+            error(f"'{command}' arey kehna kya chahte ho? syntax check kr")
+
+        # Input
+        if command == "puch":
+            translated_lines.append(handle_input(words))
             continue
 
-        # Handle print
-        if words[0] == "dikha":
-            content = " ".join(words[1:])
-            translated_lines.append(f"print({content})")
+        # Print
+        if command == "dikha":
+            translated_lines.append(handle_print(words))
             continue
 
-        if not stripped_line:
-            translated_lines.append("")
-            continue
+        # Keyword replacement (if, while etc.)
+        new_line = replace_keywords(stripped_line)
 
-        for clav_key, py_key in KEYWORDS.items():
-            words = stripped_line.split()
-            words = [py_key if word == clav_key else word for word in words]
-            stripped_line = " ".join(words)
+        # Unknown command detection
+        if new_line == stripped_line and command not in KEYWORDS:
+            error(f"'{command}' koi valid command nahi hai")
 
-        translated_lines.append(stripped_line)
+        translated_lines.append(new_line)
 
     return "\n".join(translated_lines)
 
@@ -57,9 +83,9 @@ def run_file(file_path):
         exec(translated_code)
 
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' nhi milri bro.")
+        print(f"Error: File '{file_path}' nahi milri bro.")
     except Exception as e:
-        print(f"Execution Error: {e} bhai")
+        print(f"{e}")
 
 
 if __name__ == "__main__":
