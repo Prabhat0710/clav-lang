@@ -1,5 +1,7 @@
-dikha 100
-dikha "prabhat"
+dikha "Ek naam likh"
+puch naam
 
-puch name
-dikha name
+agar naam == "Prabhat":
+    dikha "Legend"
+warnaaaa:
+    dikha "Try harder"

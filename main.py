@@ -6,34 +6,40 @@ def error(msg):
     raise Exception(f"Clav Error: {msg}")
 
 
-def handle_input(words):
+def handle_input(words, indent):
     if len(words) < 2:
         error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle")
 
-    var_name = words[1]
-    return f"{var_name} = input()"
+    return f"{indent}{words[1]} = input()"
 
 
-def handle_print(words):
+def handle_print(words, indent):
     if len(words) < 2:
         error("kya print kru? variable ka naam to de")
 
     content = " ".join(words[1:])
-    return f"print({content})"
+    return f"{indent}print({content})"
 
 
-def replace_keywords(line):
-    for clav_key, py_key in KEYWORDS.items():
-        if line.startswith(clav_key):
-            return line.replace(clav_key, py_key, 1)
-    return line
+# def replace_keywords(line):
+#     for clav_key, py_key in KEYWORDS.items():
+#         if line.startswith(clav_key):
+#             return line.replace(clav_key, py_key, 1)
+#     return line
 
 
 def translate_code(code_lines):
     translated_lines = []
 
+    prev_indent = 0
+    last_was_block = False
+    last_was_if = False
     for line in code_lines:
-        stripped_line = line.rstrip()
+        # Preserve indentation
+        indent_size = len(line) - len(line.lstrip())
+        indent = line[:indent_size]
+
+        stripped_line = line.strip()
         words = stripped_line.split()
 
         # Empty line safe
@@ -41,30 +47,66 @@ def translate_code(code_lines):
             translated_lines.append("")
             continue
 
-        command = words[0]
-        valid_commands = ["dikha", "puch"] + list(KEYWORDS.keys())
+        command = words[0].replace(":", "")
+        if indent_size > prev_indent and not last_was_block:
+            error("galat indentation hai🫵😂")
 
-        if command not in valid_commands:
-            error(f"'{command}' arey kehna kya chahte ho? syntax check kr")
+        prev_indent = indent_size
+        last_was_block = False
+
+        # valid_commands = list(KEYWORDS.keys())
+
+        # if command not in valid_commands:
+        #     error(f"'{command}' arey kehna kya chahte ho? syntax check kr")
 
         # Input
         if command == "puch":
-            translated_lines.append(handle_input(words))
+            translated_lines.append(handle_input(words, indent))
             continue
 
         # Print
         if command == "dikha":
-            translated_lines.append(handle_print(words))
+            translated_lines.append(handle_print(words, indent))
+            continue
+        
+        # If
+        if command == "agar":
+            if not stripped_line.endswith(":"):
+                error("agar ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+
+            condition = stripped_line[len("agar"):].strip()
+            translated_lines.append(f"{indent}if {condition}")
+
+            last_was_block = True
+            last_was_if = True
+            continue
+        
+        # Else
+        if command == "warna":
+            if not stripped_line.endswith(":"):
+                error("warna ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+            
+            if not last_was_if:
+                error("warna bina agar ke use ni hota yr🙎")
+            
+            translated_lines.append(f"{indent}else:")
+
+            last_was_block = True
+            last_was_if = False
+            continue
+        
+        # while
+        if command == "jabtak":
+            if not stripped_line.endswith(":"):
+                error("jabtak ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+            
+            condition = stripped_line[len("jabtak"):].strip()
+            translated_lines.append(f"{indent}while {condition}")
+
+            last_was_block = True
             continue
 
-        # Keyword replacement (if, while etc.)
-        new_line = replace_keywords(stripped_line)
-
-        # Unknown command detection
-        if new_line == stripped_line and command not in KEYWORDS:
-            error(f"'{command}' koi valid command nahi hai")
-
-        translated_lines.append(new_line)
+        error(f"'{command}' inavalid keyword, check krle yr please🙏")
 
     return "\n".join(translated_lines)
 
