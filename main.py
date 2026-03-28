@@ -47,6 +47,21 @@ def translate_code(code_lines):
         last_was_block = False
 
 
+        if "=" in stripped_line:
+            parts = stripped_line.split("=", 1)
+
+            if len(parts) != 2:
+                error("assignment galat hai bhai")
+
+            var = parts[0].strip()
+            value = parts[1].strip()
+
+            if not var.isidentifier():
+                error(f"'{var}' valid variable name nahi hai")
+
+            translated_lines.append(f"{indent}{var} = {value}")
+            continue
+
         if command not in KEYWORDS:
             error(f"'{command}' inavalid keyword, check krle yr please🙏")
 

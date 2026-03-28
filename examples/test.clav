@@ -1,7 +1,5 @@
-dikha "Ek naam likh"
-puch naam
+num = 10
 
-agar naam == "Prabhat":
-    dikha "Legend"
-warnaaaa:
-    dikha "Try harder"
+jabtak num > 0:
+    dikha "prabhat singh"
+    num = num - 2
