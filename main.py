@@ -10,7 +10,13 @@ def handle_input(words, indent):
     if len(words) < 2:
         error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle")
 
-    return f"{indent}{words[1]} = input()"
+    return (
+    f"{indent}val = input()\n"
+    f"{indent}try:\n"
+    f"{indent}    {words[1]} = int(val)\n"
+    f"{indent}except:\n"
+    f"{indent}    {words[1]} = val"
+    )
 
 
 def handle_print(words, indent):
@@ -41,7 +47,7 @@ def translate_code(code_lines):
 
         command = words[0].replace(":", "")
         if indent_size > prev_indent and not last_was_block:
-            error("galat indentation hai🫵 😂")
+            error("galat indentation hai 🫵  😂")
 
         prev_indent = indent_size
         last_was_block = False

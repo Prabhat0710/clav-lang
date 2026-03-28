@@ -1,5 +1,4 @@
-num = 10
-
-jabtak num > 0:
-    dikha "prabhat singh"
-    num = num - 2
+puch num
+dikha num
+num = num + 10
+dikha num
