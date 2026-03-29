@@ -2,7 +2,7 @@ KEYWORDS = {
     "dikha" : "print",
     "puch" : "input",
     "agar" : "if",
-    "agar nahi" : "elif",
+    "agarnahi" : "elif",
     "warna" : "else",
     "jabtak" : "while",
     "ruk" : "break"

@@ -93,17 +93,18 @@ def translate_code(code_lines):
             continue
         
         # Elif
-        if stripped_line.startswith("agar nahi"):
+        if KEYWORDS.get(command) == "else":
             if not stripped_line.endswith(":"):
-                error("'agar nahi' ke baad ':' lagana bhool gaya kya?")
+                error("agarnahi ke baad ':' lagana bhool gaya kya?")
 
             if not last_was_if:
-                error("'agar nahi' bina 'agar' ke use nahi hota bhai")
+                error("agarnahi bina agar ke use nahi hota bhai")
 
-            condition = stripped_line[len("agar nahi"):].strip()
+            condition = stripped_line[len("agarnahi"):].strip()
             translated_lines.append(f"{indent}elif {condition}")
 
             last_was_block = True
+            last_was_if = True
             continue
                 
         # If
