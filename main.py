@@ -18,13 +18,27 @@ def handle_input(words, indent):
     f"{indent}    {words[1]} = val"
     )
 
-
 def handle_print(words, indent):
     if len(words) < 2:
         error("kya print kru? variable ka naam to de")
 
     content = " ".join(words[1:])
     return f"{indent}print({content})"
+
+def is_assignment(line):
+    in_string = False
+
+    for i, ch in enumerate(line):
+        if ch == '"':
+            in_string = not in_string
+
+        # detect single '=' but NOT '==' and NOT inside string
+        if ch == "=" and not in_string:
+            if i + 1 < len(line) and line[i + 1] == "=":
+                continue
+            return True
+
+    return False
 
 def translate_code(code_lines):
     translated_lines = []
@@ -60,11 +74,10 @@ def translate_code(code_lines):
             if indent_size != indent_stack[-1]:
                 error("indentation mismatch hai")
 
-        prev_indent = indent_size
         last_was_block = False
 
         # Assignment
-        if "=" in stripped_line and not stripped_line.strip().startswith("agar"):
+        if is_assignment(stripped_line) and not stripped_line.strip().startswith("agar"):
             parts = stripped_line.split("=", 1)
 
             if len(parts) != 2:
@@ -78,7 +91,8 @@ def translate_code(code_lines):
 
             translated_lines.append(f"{indent}{var} = {value}")
             continue
-
+        
+        # Keyword check
         if command not in KEYWORDS:
             error(f"'{command}' inavalid keyword, check krle yr please🙏")
 
@@ -93,7 +107,7 @@ def translate_code(code_lines):
             continue
         
         # Elif
-        if KEYWORDS.get(command) == "else":
+        if KEYWORDS.get(command) == "elif":
             if not stripped_line.endswith(":"):
                 error("agarnahi ke baad ':' lagana bhool gaya kya?")
 
