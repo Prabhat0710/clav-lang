@@ -1,4 +1,8 @@
-puch num
-dikha num
-num = num + 10
-dikha num
+num = 0
+jabtak num < 8:
+    dikha "count down", num
+    agar num == 7:
+        dikha "SUII"
+        ruk
+    num = num + 1
+dikha "new value", num

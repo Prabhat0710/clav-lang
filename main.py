@@ -29,7 +29,8 @@ def handle_print(words, indent):
 def translate_code(code_lines):
     translated_lines = []
 
-    prev_indent = 0
+    indent_stack = [0]
+
     last_was_block = False
     last_was_if = False
     for line in code_lines:
@@ -46,18 +47,28 @@ def translate_code(code_lines):
             continue
 
         command = words[0].replace(":", "")
-        if indent_size > prev_indent and not last_was_block:
-            error("galat indentation hai 🫵  😂")
+
+        if indent_size > indent_stack[-1]:
+            if not last_was_block:
+                error("galat indentation hai 🫵 😂")
+            indent_stack.append(indent_size)
+
+        elif indent_size < indent_stack[-1]:
+            while indent_stack and indent_size < indent_stack[-1]:
+                indent_stack.pop()
+
+            if indent_size != indent_stack[-1]:
+                error("indentation mismatch hai")
 
         prev_indent = indent_size
         last_was_block = False
 
 
-        if "=" in stripped_line:
+        if "=" in stripped_line and not stripped_line.strip().startswith("agar"):
             parts = stripped_line.split("=", 1)
 
             if len(parts) != 2:
-                error("assignment galat hai bhai")
+                error("glt baat bro, ese assign krte h kya? check kr shi se")
 
             var = parts[0].strip()
             value = parts[1].strip()
@@ -116,6 +127,11 @@ def translate_code(code_lines):
             translated_lines.append(f"{indent}while {condition}")
 
             last_was_block = True
+            continue
+        
+        # Break
+        if command == "ruk":
+            translated_lines.append(f"{indent}break")
             continue
 
     return "\n".join(translated_lines)
