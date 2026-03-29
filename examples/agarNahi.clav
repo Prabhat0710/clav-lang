@@ -1,0 +1,8 @@
+puch x
+
+agar x > 10:
+    dikha "big"
+agar nahi x == 10:
+    dikha "equal"
+warna:
+    dikha "small"

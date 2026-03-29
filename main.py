@@ -63,7 +63,7 @@ def translate_code(code_lines):
         prev_indent = indent_size
         last_was_block = False
 
-
+        # Assignment
         if "=" in stripped_line and not stripped_line.strip().startswith("agar"):
             parts = stripped_line.split("=", 1)
 
@@ -92,6 +92,20 @@ def translate_code(code_lines):
             translated_lines.append(handle_print(words, indent))
             continue
         
+        # Elif
+        if stripped_line.startswith("agar nahi"):
+            if not stripped_line.endswith(":"):
+                error("'agar nahi' ke baad ':' lagana bhool gaya kya?")
+
+            if not last_was_if:
+                error("'agar nahi' bina 'agar' ke use nahi hota bhai")
+
+            condition = stripped_line[len("agar nahi"):].strip()
+            translated_lines.append(f"{indent}elif {condition}")
+
+            last_was_block = True
+            continue
+                
         # If
         if KEYWORDS.get(command) == "if":
             if not stripped_line.endswith(":"):
