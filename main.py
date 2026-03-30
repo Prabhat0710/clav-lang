@@ -6,9 +6,9 @@ def error(msg, line_no):
     raise Exception(f"Clav Error (Line {line_no}): {msg}")
 
 
-def handle_input(words, indent):
+def handle_input(words, indent, line_no):
     if len(words) < 2:
-        error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle")
+        error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle", line_no)
 
     return (
     f"{indent}val = input()\n"
@@ -18,9 +18,9 @@ def handle_input(words, indent):
     f"{indent}    {words[1]} = val"
     )
 
-def handle_print(words, indent):
+def handle_print(words, indent, line_no):
     if len(words) < 2:
-        error("kya print kru? variable ka naam to de")
+        error("kya print kru? variable ka naam to de", line_no)
 
     content = " ".join(words[1:])
     return f"{indent}print({content})"
@@ -98,12 +98,12 @@ def translate_code(code_lines):
 
         # Input
         if command == "puch":
-            translated_lines.append(handle_input(words, indent))
+            translated_lines.append(handle_input(words, indent, line_no))
             continue
 
         # Print
         if command == "dikha":
-            translated_lines.append(handle_print(words, indent))
+            translated_lines.append(handle_print(words, indent, line_no))
             continue
         
         # Elif
