@@ -5,5 +5,6 @@ KEYWORDS = {
     "agarnahi" : "elif",
     "warna" : "else",
     "jabtak" : "while",
-    "ruk" : "break"
+    "ruk" : "break",
+    "chlo" : "continue"
 }

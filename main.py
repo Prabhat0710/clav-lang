@@ -166,6 +166,11 @@ def translate_code(code_lines):
             translated_lines.append(f"{indent}break")
             continue
 
+        # Continue
+        if command == "chalu":
+            translated_lines.append(f"{indent}continue")
+            continue
+
     return "\n".join(translated_lines)
 
 

@@ -1,0 +1,7 @@
+num = 0
+
+jabtak num < 5:
+    num = num + 1
+    agar num == 3:
+        chalu
+    dikha num
