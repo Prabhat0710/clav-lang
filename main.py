@@ -44,6 +44,7 @@ def translate_code(code_lines):
     translated_lines = []
 
     indent_stack = [0]
+    loop_stack = [0]
 
     last_was_block = False
     last_was_if = False
@@ -70,6 +71,9 @@ def translate_code(code_lines):
         elif indent_size < indent_stack[-1]:
             while indent_stack and indent_size < indent_stack[-1]:
                 indent_stack.pop()
+            
+            while loop_stack and indent_size <= loop_stack[-1]:
+                loop_stack.pop()
 
             if indent_size != indent_stack[-1]:
                 error("indentation mismatch hai", line_no)
@@ -157,17 +161,24 @@ def translate_code(code_lines):
             
             condition = stripped_line[len(command):].strip()
             translated_lines.append(f"{indent}while {condition}")
+            loop_stack.append(indent_size)
 
             last_was_block = True
             continue
         
         # Break
         if command == "ruk":
+            if not loop_stack:
+                error("'ruk' sirf loop ke andr use hoga", line_no)
+
             translated_lines.append(f"{indent}break")
             continue
 
         # Continue
-        if command == "chalu":
+        if command == "chlo":
+            if not loop_stack:
+                error("'chlo' sirf loop ke andr use hoga", line_no)
+
             translated_lines.append(f"{indent}continue")
             continue
 
