@@ -1,0 +1,7 @@
+puch num1
+puch num2
+
+agar num1 > num2:
+    dikha "greater", num1
+warna:
+    dikha "greater", num2

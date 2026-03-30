@@ -2,8 +2,8 @@ import sys
 from keywords import KEYWORDS
 
 
-def error(msg):
-    raise Exception(f"Clav Error: {msg}")
+def error(msg, line_no):
+    raise Exception(f"Clav Error (Line {line_no}): {msg}")
 
 
 def handle_input(words, indent):
@@ -47,7 +47,7 @@ def translate_code(code_lines):
 
     last_was_block = False
     last_was_if = False
-    for line in code_lines:
+    for line_no, line in enumerate(code_lines, start=1):
         # Preserve indentation
         indent_size = len(line) - len(line.lstrip())
         indent = line[:indent_size]
@@ -64,7 +64,7 @@ def translate_code(code_lines):
 
         if indent_size > indent_stack[-1]:
             if not last_was_block:
-                error("galat indentation hai 🫵 😂")
+                error("galat indentation hai 🫵 😂", line_no)
             indent_stack.append(indent_size)
 
         elif indent_size < indent_stack[-1]:
@@ -72,7 +72,7 @@ def translate_code(code_lines):
                 indent_stack.pop()
 
             if indent_size != indent_stack[-1]:
-                error("indentation mismatch hai")
+                error("indentation mismatch hai", line_no)
 
         last_was_block = False
 
@@ -81,20 +81,20 @@ def translate_code(code_lines):
             parts = stripped_line.split("=", 1)
 
             if len(parts) != 2:
-                error("glt baat bro, ese assign krte h kya? check kr shi se")
+                error("glt baat bro, ese assign krte h kya? check kr shi se", line_no)
 
             var = parts[0].strip()
             value = parts[1].strip()
 
             if not var.isidentifier():
-                error(f"'{var}' valid variable name nahi hai")
+                error(f"'{var}' valid variable name nahi hai", line_no)
 
             translated_lines.append(f"{indent}{var} = {value}")
             continue
         
         # Keyword check
         if command not in KEYWORDS:
-            error(f"'{command}' inavalid keyword, check krle yr please🙏")
+            error(f"'{command}' inavalid keyword, check krle yr please🙏", line_no)
 
         # Input
         if command == "puch":
@@ -109,10 +109,10 @@ def translate_code(code_lines):
         # Elif
         if KEYWORDS.get(command) == "elif":
             if not stripped_line.endswith(":"):
-                error("agarnahi ke baad ':' lagana bhool gaya kya?")
+                error("agarnahi ke baad ':' lagana bhool gaya kya?", line_no)
 
             if not last_was_if:
-                error("agarnahi bina agar ke use nahi hota bhai")
+                error("agarnahi bina agar ke use nahi hota bhai", line_no)
 
             condition = stripped_line[len("agarnahi"):].strip()
             translated_lines.append(f"{indent}elif {condition}")
@@ -124,7 +124,7 @@ def translate_code(code_lines):
         # If
         if KEYWORDS.get(command) == "if":
             if not stripped_line.endswith(":"):
-                error("'agar' ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+                error("'agar' ke baad ':' lagana bhool gya, agli bar ni btauga😟",line_no)
 
             condition = stripped_line[len(command):].strip()
             translated_lines.append(f"{indent}if {condition}")
@@ -136,10 +136,13 @@ def translate_code(code_lines):
         # Else
         if KEYWORDS.get(command) == "else":
             if not stripped_line.endswith(":"):
-                error("'warna' ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+                error("'warna' ke baad ':' lagana bhool gya, agli bar ni btauga😟", line_no)
+            
+            if stripped_line.strip() != "warna:":
+                error("warna ke saath condition nhi ati bro 😒", line_no)
             
             if not last_was_if:
-                error("'warna' bina 'agar' ke use ni hota yr🙎")
+                error("'warna' bina 'agar' ke use ni hota yr🙎", line_no)
             
             translated_lines.append(f"{indent}else:")
 
@@ -150,7 +153,7 @@ def translate_code(code_lines):
         # while
         if KEYWORDS.get(command) == "while":
             if not stripped_line.endswith(":"):
-                error("jabtak ke baad ':' lagana bhool gya, agli bar ni btauga😟")
+                error("jabtak ke baad ':' lagana bhool gya, agli bar ni btauga😟", line_no)
             
             condition = stripped_line[len(command):].strip()
             translated_lines.append(f"{indent}while {condition}")
