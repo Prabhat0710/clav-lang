@@ -1,9 +1,7 @@
-num = 10.2256
+puch puch 
 
-jabtak num < 5:
-    num = num + 1
-    agar num == 3:
+jabtak puch < 5:
+    puch = puch + 1
+    agar puch == 3:
         chlo
-    dikha num
-
-dikha num
+    dikha puch

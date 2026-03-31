@@ -11,14 +11,14 @@ def handle_input(words, indent, line_no):
         error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle", line_no)
 
     return (
-    f"{indent}val = input()\n"
-    f"{indent}try:\n"
-    f"{indent}    {words[1]} = int(val)\n"
-    f"{indent}except:\n"
-    f"{indent}    try:\n"
-    f"{indent}        {words[1]} = float(val)\n"
-    f"{indent}    except:\n"
-    f"{indent}        {words[1]} = val"
+        f"{indent}__clav_tmp = input()\n"
+        f"{indent}try:\n"
+        f"{indent}    {words[1]} = int(__clav_tmp)\n"
+        f"{indent}except:\n"
+        f"{indent}    try:\n"
+        f"{indent}        {words[1]} = float(__clav_tmp)\n"
+        f"{indent}    except:\n"
+        f"{indent}        {words[1]} = __clav_tmp"
     )
 
 def handle_print(words, indent, line_no):
