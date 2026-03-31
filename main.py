@@ -1,6 +1,7 @@
 import sys
 from keywords import KEYWORDS
 
+RESERVED_KEYWORDS = set(KEYWORDS.keys())
 
 def error(msg, line_no):
     raise Exception(f"Clav Error (Line {line_no}): {msg}")
@@ -9,6 +10,10 @@ def error(msg, line_no):
 def handle_input(words, indent, line_no):
     if len(words) < 2:
         error("input lene ke liye variable ka naam chahiye bhai, kuch naam to de phle", line_no)
+    
+    var_name = words[1]
+    if var_name in RESERVED_KEYWORDS:
+        error(f"'{var_name}' reserved keyword h dost, konse nashe kre h?", line_no)
 
     return (
         f"{indent}__clav_tmp = input()\n"
@@ -92,6 +97,9 @@ def translate_code(code_lines):
 
             var = parts[0].strip()
             value = parts[1].strip()
+
+            if var in RESERVED_KEYWORDS:
+                error(f"'{var}' reserved keyword h dost, konse nashe kre h?", line_no)
 
             if not var.isidentifier():
                 error(f"'{var}' valid variable name nahi hai", line_no)

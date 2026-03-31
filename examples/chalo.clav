@@ -1,7 +1,10 @@
-puch puch 
+puch = 10
+dikha puch 
 
-jabtak puch < 5:
-    puch = puch + 1
-    agar puch == 3:
+jabtak num < 5:
+    num = num + 1
+    agar num == 3:
         chlo
-    dikha puch
+    dikha num
+
+dikha num
