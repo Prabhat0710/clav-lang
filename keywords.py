@@ -6,5 +6,7 @@ KEYWORDS = {
     "warna" : "else",
     "jabtak" : "while",
     "ruk" : "break",
-    "chlo" : "continue"
+    "chlo" : "continue",
+    "sach" : "True",
+    "jhoot" : "False"
 }

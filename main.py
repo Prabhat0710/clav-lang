@@ -130,6 +130,10 @@ def translate_code(code_lines):
                 error("agarnahi bina agar ke use nahi hota bhai", line_no)
 
             condition = stripped_line[len("agarnahi"):].strip()
+
+            for clav_key, py_key in KEYWORDS.items():
+                condition = condition.replace(clav_key, py_key)
+
             translated_lines.append(f"{indent}elif {condition}")
 
             last_was_block = True
@@ -142,6 +146,10 @@ def translate_code(code_lines):
                 error("'agar' ke baad ':' lagana bhool gya, agli bar ni btauga😟",line_no)
 
             condition = stripped_line[len(command):].strip()
+
+            for clav_key, py_key in KEYWORDS.items():
+                condition = condition.replace(clav_key, py_key)
+
             translated_lines.append(f"{indent}if {condition}")
 
             last_was_block = True
@@ -171,6 +179,10 @@ def translate_code(code_lines):
                 error("jabtak ke baad ':' lagana bhool gya, agli bar ni btauga😟", line_no)
             
             condition = stripped_line[len(command):].strip()
+
+            for clav_key, py_key in KEYWORDS.items():
+                condition = condition.replace(clav_key, py_key)
+
             translated_lines.append(f"{indent}while {condition}")
             loop_stack.append(indent_size)
 
