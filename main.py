@@ -15,7 +15,10 @@ def handle_input(words, indent, line_no):
     f"{indent}try:\n"
     f"{indent}    {words[1]} = int(val)\n"
     f"{indent}except:\n"
-    f"{indent}    {words[1]} = val"
+    f"{indent}    try:\n"
+    f"{indent}        {words[1]} = float(val)\n"
+    f"{indent}    except:\n"
+    f"{indent}        {words[1]} = val"
     )
 
 def handle_print(words, indent, line_no):
