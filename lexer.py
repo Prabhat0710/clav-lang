@@ -146,12 +146,3 @@ class Lexer:
 
         self.tokens.append(Token(TokenType.EOF, None, self.line_no))
         return self.tokens
-    
-if __name__ == "__main__":
-    code = """agar x > 5:
-    dikha "yes"
-"""
-    lexer = Lexer(code)
-    tokens = lexer.tokenize()
-    for token in tokens:
-        print(token)
