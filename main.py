@@ -3,6 +3,8 @@ from keywords import KEYWORDS
 
 RESERVED_KEYWORDS = set(KEYWORDS.keys())
 
+CMD = {v: k for k, v in KEYWORDS.items()}
+
 def error(msg, line_no):
     raise Exception(f"Clav Error (Line {line_no}): {msg}")
 
@@ -112,12 +114,12 @@ def translate_code(code_lines):
             error(f"'{command}' inavalid keyword, check krle yr please🙏", line_no)
 
         # Input
-        if command == "puch":
+        if command == CMD["input"]:
             translated_lines.append(handle_input(words, indent, line_no))
             continue
 
         # Print
-        if command == "dikha":
+        if command == CMD["print"]:
             translated_lines.append(handle_print(words, indent, line_no))
             continue
         
@@ -190,7 +192,7 @@ def translate_code(code_lines):
             continue
         
         # Break
-        if command == "ruk":
+        if command == CMD["break"]:
             if not loop_stack:
                 error("'ruk' sirf loop ke andr use hoga", line_no)
 
@@ -198,7 +200,7 @@ def translate_code(code_lines):
             continue
 
         # Continue
-        if command == "chlo":
+        if command == CMD["continue"]:
             if not loop_stack:
                 error("'chlo' sirf loop ke andr use hoga", line_no)
 
