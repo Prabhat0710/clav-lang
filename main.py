@@ -1,4 +1,5 @@
 import sys
+import re
 from keywords import KEYWORDS
 
 RESERVED_KEYWORDS = set(KEYWORDS.keys())
@@ -46,6 +47,10 @@ def is_assignment(line):
         if ch == "=" and not in_string:
             if i + 1 < len(line) and line[i + 1] == "=":
                 continue
+            
+            if i > 0 and line[i-1] in "!<>":
+                continue
+
             return True
 
     return False
@@ -134,7 +139,7 @@ def translate_code(code_lines):
             condition = stripped_line[len("agarnahi"):].strip()
 
             for clav_key, py_key in KEYWORDS.items():
-                condition = condition.replace(clav_key, py_key)
+                condition = re.sub(rf"\b{clav_key}\b", py_key, condition)
 
             translated_lines.append(f"{indent}elif {condition}")
 
@@ -150,7 +155,7 @@ def translate_code(code_lines):
             condition = stripped_line[len(command):].strip()
 
             for clav_key, py_key in KEYWORDS.items():
-                condition = condition.replace(clav_key, py_key)
+                condition = re.sub(rf"\b{clav_key}\b", py_key, condition)
 
             translated_lines.append(f"{indent}if {condition}")
 
@@ -182,8 +187,8 @@ def translate_code(code_lines):
             
             condition = stripped_line[len(command):].strip()
 
-            for clav_key, py_key in KEYWORDS.items():
-                condition = condition.replace(clav_key, py_key)
+        for clav_key, py_key in KEYWORDS.items():
+            condition = re.sub(rf"\b{clav_key}\b", py_key, condition)
 
             translated_lines.append(f"{indent}while {condition}")
             loop_stack.append(indent_size)
@@ -221,10 +226,17 @@ def run_file(file_path):
         print(translated_code)
         print("\n--- Output ---\n")
 
-        exec(translated_code)
+        compiled = compile(translated_code, file_path, "exec")
+        exec(compiled, {})
 
     except FileNotFoundError:
         print(f"Error: File '{file_path}' nahi milri bro.")
+    except SyntaxError as e:
+        print(f"Clav Error (line {e.lineno}): syntax galat h, check kr")
+    except NameError as e:
+        print(f"Clav Error: variable define nahi kiya tune — {e}")
+    except ZeroDivisionError:
+        print(f"Clav Error: zero se divide nahi krte bhai 💀")
     except Exception as e:
         print(f"{e}")
 
