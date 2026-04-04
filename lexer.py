@@ -45,6 +45,9 @@ class Lexer:
             result += self.current_char()
             self.advance()
 
+        if self.current_char() is None:
+            raise Exception(f"Clav Error (Line {self.line_no}): string ko bnd to krde \" lagana tha bhai 🙏")
+
         self.advance()               # skip closing "
         return Token(TokenType.STRING, result, self.line_no)
 
@@ -142,7 +145,6 @@ class Lexer:
 
             # unknown character
             else:
-                raise Exception(f"Clav Error (Line {self.line_no}): '{ch}' samajh nahi aaya bhai")
-
+                raise Exception(f"Clav Error (Line {self.line_no}): bhai kya h ye '{ch}'? 🤦")
         self.tokens.append(Token(TokenType.EOF, None, self.line_no))
         return self.tokens
