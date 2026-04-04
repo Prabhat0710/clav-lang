@@ -32,8 +32,8 @@ class Parser:
         if token.type != token_type:
             raise Exception(
                 f"Clav Error (Line {token.line_no}): "
-                f"expected {token_type} but mila {token.type} ({token.value})"
-            )
+                f"ham soche {token_type} milega pr tumne to '{token.value}' pkda dia yr"
+                )
         return self.advance()
 
     def skip_newlines(self):
@@ -62,7 +62,7 @@ class Parser:
 
         raise Exception(
             f"Clav Error (Line {token.line_no}): "
-            f"'{token.value}' samajh nahi aaya bhai"
+            f"'{token.value}' kya hota hai bhai? 🤔 number, string ya variable daal, ye andhere mein teer mat maar 🏹"
         )
 
     def parse_expression(self):
@@ -207,7 +207,7 @@ class Parser:
                 self.advance()
                 return ContinueNode()
 
-        # assignment: x = 5
+        # assignment
         if token.type == TokenType.IDENTIFIER:
             if self.peek() and self.peek().type == TokenType.ASSIGN:
                 identifier_token = self.advance()  # grab identifier
@@ -218,7 +218,7 @@ class Parser:
 
         raise Exception(
             f"Clav Error (Line {token.line_no}): "
-            f"'{token.value}' yahan expect nahi tha bhai"
+            f"'{token.value}' kya kar raha hai bhai? 😂 sahi keyword likh 🤦"
         )
 
     def parse(self):
