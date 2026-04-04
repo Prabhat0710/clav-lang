@@ -1,5 +1,5 @@
 puch num1
-puch num2
+puch 
 
 agar num1 > num2:
     dikha "greater", num1

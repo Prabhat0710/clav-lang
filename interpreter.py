@@ -51,8 +51,8 @@ class Interpreter:
         if isinstance(node, ContinueNode):
             raise ContinueSignal()
 
-        raise Exception(f"Clav Error: unknown node {type(node)}")
-
+        raise Exception(f"Clav Error: bhai ye '{type(node)}' node kahan se uthake le aaya? 😂")
+    
     # ─── expression evaluator
 
     def evaluate(self, node):
@@ -65,7 +65,7 @@ class Interpreter:
         if isinstance(node, IdentifierNode):
             if node.name not in self.env:
                 raise Exception(
-                    f"Clav Error: '{node.name}' variable define nahi kiya tune"
+                    f"Clav Error: '{node.name}' ko pehle banaya to hota bhai 😭 seedha use karne chala aaya, ghar mein ghusne se pehle darwaza khatkhatate hain 🚪"
                 )
             return self.env[node.name]
 
@@ -79,7 +79,7 @@ class Interpreter:
             if op == "*":  return left * right
             if op == "/":
                 if right == 0:
-                    raise Exception("Clav Error: zero se divide nahi krte bhai 💀")
+                    raise Exception("Clav Error: zero se divide?? 💀 maths ki class mein sora tha kya? 😴 ye possible hi ni hai bhai 🤦")
                 return left / right
             if op == ">":  return left > right
             if op == "<":  return left < right
@@ -88,9 +88,9 @@ class Interpreter:
             if op == ">=": return left >= right
             if op == "<=": return left <= right
 
-            raise Exception(f"Clav Error: '{op}' operator samajh nahi aaya")
+            raise Exception(f"Clav Error: '{op}' kaunsa operator hai bhai? 🧐 khud se operator banane laga hai kya? 😂 jo hai unhi se kaam chala")
 
-        raise Exception(f"Clav Error: unknown expression node {type(node)}")
+        raise Exception(f"Clav Error: '{type(node)}' expression ka toh naam bhi nahi suna tha bhai 🤯 kahan se copy kiya ye? 😭")
 
     # ─── statement executors 
 
