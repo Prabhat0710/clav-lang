@@ -185,14 +185,14 @@ class Parser:
         if token.type == TokenType.EOF:
             return None
         
-        if token.type == TokenType.IDENTIFIER and token.value not in KEYWORDS:
+        if token.type == TokenType.IDENTIFIER and token.value not in KEYWORDS:            
         # check if it looks like a wrong keyword (not an assignment)
             if not (self.peek() and self.peek().type == TokenType.ASSIGN):
                 raise Exception(
                     f"Clav Error (Line {token.line_no}): "
                     f"'{token.value}' kya hota h 😂 ? sahi keyword likh 🤦"
                 )
-    
+        
         # keyword statements
         if token.type == TokenType.KEYWORD:
             if token.value == CMD["print"]:
@@ -215,10 +215,19 @@ class Parser:
                 self.advance()
                 return ContinueNode()
 
-        raise Exception(
-            f"Clav Error (Line {token.line_no}): "
-            f"'{token.value}' "
-        )
+            # ADD THESE THREE ↓
+            if token.value == CMD["else"]:
+                raise Exception(
+                    f"Clav Error (Line {token.line_no}): "
+                    f"'warna' bina 'agar' ke kahan se agya? 😂 pehle agar likh bhai 🙏"
+                )
+
+            if token.value == CMD["elif"]:
+                raise Exception(
+                    f"Clav Error (Line {token.line_no}): "
+                    f"'agarnahi' akela kuch nahi karta bhai 😭 upar 'agar' chahiye hoga 🤦"
+                )
+
 
     def parse(self):
         statements = []
