@@ -10,8 +10,8 @@ CMD = {v: k for k, v in KEYWORDS.items()}
 
 class Parser:
     def __init__(self, tokens):
-        self.tokens  = tokens
-        self.pos     = 0
+        self.tokens = tokens
+        self.pos    = 0
 
     def current(self):
         return self.tokens[self.pos]
@@ -26,15 +26,6 @@ class Parser:
         if next_pos < len(self.tokens):
             return self.tokens[next_pos]
         return None
-
-    def expect(self, token_type):
-        token = self.current()
-        if token.type != token_type:
-            raise Exception(
-                f"Clav Error (Line {token.line_no}): "
-                f"ham soche {token_type} milega pr tumne to '{token.value}' pkda dia yr"
-                )
-        return self.advance()
 
     def skip_newlines(self):
         while self.current().type == TokenType.NEWLINE:
@@ -68,7 +59,6 @@ class Parser:
     def parse_expression(self):
         left = self.parse_primary()
 
-        # check if next token is an operator
         if self.current().type == TokenType.OPERATOR:
             operator = self.advance().value
             right    = self.parse_primary()
@@ -77,10 +67,7 @@ class Parser:
         return left
 
     def parse_print(self):
-        line_no = self.current().line_no
         self.advance()  # skip dikha
-
-        # dikha can take multiple comma separated values
         values = []
         values.append(self.parse_expression())
 
@@ -92,7 +79,13 @@ class Parser:
 
     def parse_input(self):
         self.advance()  # skip puch
-        token = self.expect(TokenType.IDENTIFIER)
+        token = self.current()
+        if token.type != TokenType.IDENTIFIER:
+            raise Exception(
+                f"Clav Error (Line {token.line_no}): "
+                f"'puch' ke baad variable ka naam chahiye bhai 😭 '{token.value}' kya hai ye? 🤦"
+            )
+        self.advance()
         return InputNode(token.value)
 
     def parse_assignment(self, identifier_token):
@@ -112,18 +105,17 @@ class Parser:
 
             current_indent = self.get_indent_level()
 
-            # block ended
             if current_indent <= parent_indent:
                 break
 
             if current_indent != expected_indent:
                 raise Exception(
                     f"Clav Error (Line {self.current().line_no}): "
-                    f"indentation galat hai bhai"
+                    f"indentation ki dukaan kholi hai kya? 🏪 {expected_indent} spaces chahiye the, sahi se laga 😤"
                 )
 
             if self.current().type == TokenType.INDENT:
-                self.advance()  # skip indent token
+                self.advance()
 
             stmt = self.parse_statement(expected_indent)
             if stmt:
@@ -134,13 +126,18 @@ class Parser:
     def parse_if(self, indent_level):
         self.advance()  # skip agar
         condition = self.parse_expression()
-        self.expect(TokenType.COLON)
+
+        if self.current().type != TokenType.COLON:
+            raise Exception(
+                f"Clav Error (Line {self.current().line_no}): "
+                f"'agar' ke baad ':' lagana bhool gaya? 😂 bhai itna bhi yaad nahi raha 🤦"
+            )
+        self.advance()  # skip colon
 
         body       = self.parse_block(indent_level)
         elif_cases = []
         else_body  = None
 
-        # check for agarnahi
         while True:
             self.skip_newlines()
             current_indent = self.get_indent_level()
@@ -153,16 +150,26 @@ class Parser:
 
             if (self.current().type == TokenType.KEYWORD and
                     self.current().value == CMD["elif"]):
-                self.advance()  # skip agarnahi
+                self.advance()
                 elif_condition = self.parse_expression()
-                self.expect(TokenType.COLON)
+                if self.current().type != TokenType.COLON:
+                    raise Exception(
+                        f"Clav Error (Line {self.current().line_no}): "
+                        f"'agarnahi' ke baad ':' bhool gaya phir? 😒 ek kaam dhang se kr bhai 🙏"
+                    )
+                self.advance()
                 elif_body = self.parse_block(indent_level)
                 elif_cases.append((elif_condition, elif_body))
 
             elif (self.current().type == TokenType.KEYWORD and
                     self.current().value == CMD["else"]):
-                self.advance()  # skip warna
-                self.expect(TokenType.COLON)
+                self.advance()
+                if self.current().type != TokenType.COLON:
+                    raise Exception(
+                        f"Clav Error (Line {self.current().line_no}): "
+                        f"'warna' ke baad ':' lagana tha bhai 😭 bas ek character aur chahiye tha 😤"
+                    )
+                self.advance()
                 else_body = self.parse_block(indent_level)
                 break
 
@@ -174,7 +181,13 @@ class Parser:
     def parse_while(self, indent_level):
         self.advance()  # skip jabtak
         condition = self.parse_expression()
-        self.expect(TokenType.COLON)
+
+        if self.current().type != TokenType.COLON:
+            raise Exception(
+                f"Clav Error (Line {self.current().line_no}): "
+                f"'jabtak' ke baad ':' lagana bhool gaya? 😂 loop kaise chalega bina colon ke bhai 🤦"
+            )
+        self.advance()
         body = self.parse_block(indent_level)
         return WhileNode(condition, body)
 
@@ -184,15 +197,7 @@ class Parser:
 
         if token.type == TokenType.EOF:
             return None
-        
-        if token.type == TokenType.IDENTIFIER and token.value not in KEYWORDS:            
-        # check if it looks like a wrong keyword (not an assignment)
-            if not (self.peek() and self.peek().type == TokenType.ASSIGN):
-                raise Exception(
-                    f"Clav Error (Line {token.line_no}): "
-                    f"'{token.value}' kya hota h 😂 ? sahi keyword likh 🤦"
-                )
-        
+
         # keyword statements
         if token.type == TokenType.KEYWORD:
             if token.value == CMD["print"]:
@@ -215,11 +220,10 @@ class Parser:
                 self.advance()
                 return ContinueNode()
 
-            # ADD THESE THREE ↓
             if token.value == CMD["else"]:
                 raise Exception(
                     f"Clav Error (Line {token.line_no}): "
-                    f"'warna' bina 'agar' ke kahan se agya? 😂 pehle agar likh bhai 🙏"
+                    f"'warna' bina 'agar' ke kahan se aa gaya? 😂 pehle agar likh bhai 🙏"
                 )
 
             if token.value == CMD["elif"]:
@@ -228,14 +232,35 @@ class Parser:
                     f"'agarnahi' akela kuch nahi karta bhai 😭 upar 'agar' chahiye hoga 🤦"
                 )
 
+        # assignment: x = 5
+        if token.type == TokenType.IDENTIFIER:
+            if self.peek() and self.peek().type == TokenType.ASSIGN:
+                identifier_token = self.advance()
+                return self.parse_assignment(identifier_token)
+
+            # identifier used as standalone — not assignment, not keyword → invalid
+            raise Exception(
+                f"Clav Error (Line {token.line_no}): "
+                f"'{token.value}' kaunsa keyword hai bhai? 🤔 spelling check kr, ya phir ye clav mein hota hi nahi 😂🙏"
+            )
+
+        raise Exception(
+            f"Clav Error (Line {token.line_no}): "
+            f"'{token.value}' yahan kya kar raha hai bhai? 😂 koi kaam dhandha nahi hai kya isko? sahi keyword likh 🤦"
+        )
 
     def parse(self):
         statements = []
         self.skip_newlines()
 
         while self.current().type != TokenType.EOF:
+            if self.current().type == TokenType.NEWLINE:
+                self.advance()
+                continue
+
             if self.current().type == TokenType.INDENT:
                 self.advance()
+                continue
 
             stmt = self.parse_statement(0)
             if stmt:

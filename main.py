@@ -8,20 +8,19 @@ def run_file(file_path):
         with open(file_path, "r") as file:
             source = file.read()
 
-        lexer = Lexer(source)
-        tokens = lexer.tokenize()
+        lexer       = Lexer(source)
+        tokens      = lexer.tokenize()
 
-        parser = Parser(tokens)
-        tree = parser.parse()
+        parser      = Parser(tokens)
+        tree        = parser.parse()
 
         interpreter = Interpreter()
         interpreter.run(tree)
 
     except FileNotFoundError:
-        print(f"Clav Error: file '{file_path}' nahi mili bhai")
+        print(f"Clav Error: file '{file_path}' nahi mili bhai 😭 naam sahi likha? 🤔")
     except Exception as e:
         print(e)
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
