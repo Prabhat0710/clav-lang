@@ -1,10 +1,23 @@
 import sys
+import os
 from lexer import Lexer
 from parser import Parser
 from interpreter import Interpreter
 
 def run_file(file_path):
     try:
+
+        # extension check
+        _, ext = os.path.splitext(file_path)
+        if ext != ".clav":
+            raise Exception(
+                f"Clav Error: bhai '{file_path}' kya hai ye? 😂 "
+                f"sirf .clav files chalti hain yahan, "
+                f"'.{ext.lstrip('.')}' lekar aa gaya 🤦 "
+                f"sahi file de please 🙏"
+        )
+
+
         with open(file_path, "r") as file:
             source = file.read()
 
