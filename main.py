@@ -35,8 +35,11 @@ def run_file(file_path):
     except Exception as e:
         print(e)
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 2:
-        print("Usage: python main.py <file.clav>")
+        print("Usage: clav <file.clav>")
     else:
         run_file(sys.argv[1])
+
+if __name__ == "__main__":
+    main()

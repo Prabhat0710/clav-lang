@@ -1,10 +1,10 @@
-puch = 10
-dikha puch 
+dikha "Enter a number : "
+puch num
 
 jabtak num < 5:
-    num = num + 1
     agar num == 3:
-        chlo
+        ruk
     dikha num
+    num = num + 1
 
 dikha num
